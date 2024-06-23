@@ -2,17 +2,22 @@
   "name": "ubiquitous-couscous",
   "module": "index.ts",
   "type": "module",
+  "engines": {
+    "node": ">=20 <21"
+  },
   "scripts": {
     "dev": "bun run index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/lodash": "^4.17.5"
+    "@types/lodash": "^4.17.5",
+    "prisma": "^5.15.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@prisma/client": "^5.15.1",
     "lodash": "^4.17.21",
     "puppeteer": "^22.12.0"
   }
