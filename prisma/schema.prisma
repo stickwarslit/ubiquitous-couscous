@@ -10,8 +10,42 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model HtmlScrape {
+model WebPage {
   id   Int    @id @default(autoincrement())
   url  String
   html String
+
+  Event Event[]
+}
+
+model Event {
+  id        Int     @id @default(autoincrement())
+  title     String
+  webPage   WebPage @relation(fields: [webPageId], references: [id])
+  webPageId Int
+  tag       String  @unique
+
+  circleInfo CircleEventInfo[]
+}
+
+model CircleEventInfo {
+  id      Int    @id @default(autoincrement())
+  name    String
+  penname String
+  booth   String
+
+  event   Event @relation(fields: [eventId], references: [id])
+  eventId Int
+
+  links CircleEventInfoLink[]
+
+  @@unique(name: "eventCircle", [eventId, name])
+}
+
+model CircleEventInfoLink {
+  id  Int    @id @default(autoincrement())
+  url String
+
+  circleEventInfo   CircleEventInfo @relation(fields: [circleEventInfoId], references: [id])
+  circleEventInfoId Int
 }
