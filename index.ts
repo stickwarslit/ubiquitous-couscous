@@ -9,19 +9,30 @@ const prisma = new PrismaClient();
 
 async function main() {
   for (const url of VOMA_CIRCLE_LISTS) {
-    await withPage(async (page) => {
-      await page.goto(url, { waitUntil: 'networkidle0' });
-      await page.waitForSelector('center > table', { visible: true });
-      const html = await page.$eval('html', (el) => el.outerHTML);
+    const alreadyScraped =
+      0 < (await prisma.htmlScrape.count({ where: { url } }));
 
-      await prisma.htmlScrape.create({
-        data: {
-          html,
-          url,
-        },
-      });
+    if (alreadyScraped) {
+      continue;
+    }
+
+    const html = await fetchVomaPageHTML(url);
+    await prisma.htmlScrape.create({
+      data: {
+        html,
+        url,
+      },
     });
   }
+}
+
+async function fetchVomaPageHTML(url: string) {
+  return await withPage(async (page) => {
+    await page.goto(url, { waitUntil: 'networkidle0' });
+    await page.waitForSelector('center > table', { visible: true });
+    const html = await page.$eval('html', (el) => el.outerHTML);
+    return html;
+  });
 }
 
 try {
