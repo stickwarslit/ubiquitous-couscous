@@ -1,4 +1,5 @@
 import { closeBrowser, withPage } from './src/browser';
+import { createExport } from './src/export';
 import { prisma } from './src/prisma';
 import { scrapeVomaUrl } from './src/voma-scrape';
 
@@ -10,6 +11,12 @@ async function main() {
   for (const url of VOMA_CIRCLE_LISTS) {
     await scrapeVomaUrl(url);
   }
+
+  const workbook = await createExport();
+
+  const data = await workbook.xlsx.writeBuffer();
+
+  await Bun.write('output.xlsx', data);
 }
 
 try {

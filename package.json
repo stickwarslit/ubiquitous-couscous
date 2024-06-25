@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.15.1",
+    "exceljs": "^4.4.0",
     "jsdom": "^24.1.0",
     "lodash": "^4.17.21",
     "puppeteer": "^22.12.0"
