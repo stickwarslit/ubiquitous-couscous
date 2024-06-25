@@ -25,6 +25,8 @@ model Event {
   webPageId Int
   tag       String  @unique
 
+  series String
+
   circleInfo CircleEventInfo[]
 }
 

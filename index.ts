@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import { closeBrowser, withPage } from './src/browser';
 import { JSDOM } from 'jsdom';
 import assert from 'node:assert';
+import { EventSeries } from './src/event-series';
 
 const VOMA_CIRCLE_LISTS = [
   'https://ketto.xsrv.jp/html/mimiken/clist.cgi?tvm55',
@@ -32,6 +33,7 @@ async function main() {
         tag: eventTag,
         title,
         webPage: { connect: { id: webPage.id } },
+        series: EventSeries.Voma,
       },
       update: {},
     });
