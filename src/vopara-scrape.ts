@@ -4,6 +4,8 @@ import { withPage } from './browser';
 import { EventSeries } from './event-series';
 import assert from 'node:assert';
 
+const FIRST_VOPARA_URL = 'https://ttc.ninja-web.net/vo-para/vo-para_list.htm';
+
 export async function scrapeVoparaUrl(url: string) {
   const webPage = await getOrFetchVoparaPageHTML(url);
 
@@ -12,7 +14,12 @@ export async function scrapeVoparaUrl(url: string) {
 
   const title =
     document.querySelector('body > p:nth-of-type(1)')?.textContent ?? '';
-  const eventTag = title?.match(/ボーパラ(\d+)/)?.[0];
+  const number =
+    url === FIRST_VOPARA_URL
+      ? '01'
+      : title?.match(/ボーパラ(\d+)/)?.[1] ??
+        url.match(/vo-para(\d+)_list/)?.[1];
+  const eventTag = `ボーパラ${number}`;
 
   if (!title || !eventTag) {
     console.log({ title, eventTag, url });
@@ -32,19 +39,22 @@ export async function scrapeVoparaUrl(url: string) {
 
   const circleList = [
     ...document.querySelectorAll('body > table > tbody > tr'),
-  ].filter(
-    ($tr) =>
-      !$tr.textContent?.includes('サークル名') &&
+  ].filter(($tr) => {
+    const text = $tr.textContent ?? '';
+    return (
+      !text.includes('サークル名') &&
       $tr.children.length > 1 &&
-      !$tr.textContent?.includes('AHSストア')
-  );
+      !text.includes('AHSストア') &&
+      text.trim() !== ''
+    );
+  });
 
   const circlesFormatted = circleList.map(($tr, i) => {
     try {
       const rowCells = $tr.querySelectorAll('td');
       const name = rowCells[0].textContent;
       const penname = rowCells[1].textContent;
-      const booth = rowCells[4].textContent;
+      const booth = rowCells[rowCells.length - 1].textContent;
 
       assert(name);
       assert(penname);
@@ -53,6 +63,7 @@ export async function scrapeVoparaUrl(url: string) {
       const links = [...$tr.querySelectorAll('a')]
         .map(($a) => $a.href)
         .filter((href) => href.includes('http'));
+
       return { name, penname, booth, links };
     } catch (e) {
       console.error(e);

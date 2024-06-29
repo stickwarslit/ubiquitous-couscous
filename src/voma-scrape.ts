@@ -12,7 +12,7 @@ export async function scrapeVomaUrl(url: string) {
 
   const title =
     document.querySelector('center > font:nth-child(1)')?.textContent ?? '';
-  const vomaNumber = title?.match(/THE VOC＠LOiD 超 M＠STER (\d+)/)?.[1];
+  const vomaNumber = url.match(/tvm(\d+)/)?.[1];
   const eventTag = `ボーマス${vomaNumber}`;
 
   if (!title || !vomaNumber) {
@@ -39,12 +39,11 @@ export async function scrapeVomaUrl(url: string) {
     try {
       const rowCells = $tr.querySelectorAll('td');
       const name = rowCells[2].textContent;
-      const penname = rowCells[3].textContent;
+      const penname = rowCells[3].textContent || '';
       const booth = rowCells[4].textContent;
 
-      assert(name);
-      assert(penname);
-      assert(booth);
+      assert(name, 'name');
+      assert(booth, 'booth');
 
       const links = [...$tr.querySelectorAll('a')]
         .map(($a) => $a.href)
