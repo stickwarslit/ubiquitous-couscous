@@ -13,6 +13,8 @@ bun install
 bunx prisma db push
 ```
 
+**NOTE**: This script also depends on [Puppeteer](https://pptr.dev/) for the actual web page loading and scraping. Puppeteer requires chrome to be installed in the system. This should be setup properly when running `bun install`, but if you're in a non-standard environment (ie using WSL2 like me), check the [Puppeteer troubleshooting](https://pptr.dev/troubleshooting) page.
+
 ## Running
 
 ```bash
